@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>BW.Diagnostics.StatCollection</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <Authors>Brian Williams</Authors>
+    <Description>Records statistics for a stream or collection of objects.</Description>
+    <Copyright>Brian Williams</Copyright>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/bmdub/AutoStat</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bmdub/AutoStat</RepositoryUrl>
+    <PackageTags>stats statistics autostat cardinality count estiimate percentile frequent frequency distinct distribution compare similar</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Debug\netstandard2.0\BW.Diagnostics.AutoStat.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <DocumentationFile>bin\Release\netstandard2.0\BW.Diagnostics.AutoStat.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CardinalityEstimation\CardinalityEstimation\CardinalityEstimation.csproj" />
+  </ItemGroup>
+
+</Project>
