@@ -12,105 +12,88 @@ namespace sandbox
     {
         static void Main(string[] args)
         {
+            //var config = new TestConfiguration(SelectionMode.Attribute, Configuration.DefaultStatCollectors.Append("TestStatCollector"));
             var config = new TestConfiguration(SelectionMode.All, Configuration.DefaultStatCollectors.Append("TestStatCollector"));
 
-            var thingy = new AutoStat<Record>(config);
-
+            //var autoStat1 = new AutoStat<Host>(config);
+            var autoStat1 = new AutoStat<Host>();
+            //var autoStat2 = new AutoStat<Host>(config);
+            var autoStat2 = new AutoStat<Host>();
 
             Random random = new Random();
+            int recordCount = 1_000;
 
-            int count = 1_000;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < recordCount; i++)
             {
-                Record record = new Record()
+                Host record = new Host()
                 {
-                    Name = "Brian" + i.ToString().PadLeft(6, '0'),
-                    Weight = count - (i / (count - i)),
-                    Weight2 = i / (count - i),
-                    ID = i,
-                    TransactionID = Guid.NewGuid(),
-                    NetWorth = 5000,
-                    SeenDate = DateTime.Now,
-                    OtherDate = DateTimeOffset.Now,
-                    PocketChange = new decimal(0.01) * new decimal(i),
-                    TimeSpent = TimeSpan.FromMinutes(60),
-                    CarColor = Color.Red,
-                    SomeObject = new object(),
+                    Name = "Wyatt" + i.ToString().PadLeft(6, '0'),
+                    SerialNumber = i,
+                    Uptime = TimeSpan.FromMinutes(i),
+                    PokerMoney = new decimal(0.01) * new decimal(i),
+                    DeathCount = recordCount - (i / (recordCount - i)),
+                    Awareness = Awareness.NotAlive,
+                    Escaped = random.Next(0, 2) == 1
                 };
 
-                thingy.Collect(record);
+                autoStat1.Collect(record);
             }
 
-            var recordStats = thingy.GetStats();
+            var recordStats1 = autoStat1.GetStats();
 
-            //Console.Write(recordStats.ToTextFormat());
-            //recordStats = recordStats.Where(stat => stat.MemberName == "ID").ToRecordStats();
-            //Console.Clear();
-            Console.Write(recordStats.ToTextTableFormat(Console.WindowWidth));
-            //recordStats.OpenCsvInPowershell(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "stats.csv"));
+            Console.Write(recordStats1.ToTextFormat());
+            //recordStats = recordStats.Where(stat => stat.MemberName == "SerialNumber").ToRecordStats();
+            Console.Write(recordStats1.ToTextTableFormat(Console.WindowWidth));
+            recordStats1.OpenCsvInPowershell("stats.csv");
+            
 
-
-            var thingy3 = new AutoStat<Record>(config);
-
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < recordCount; i++)
             {
-                Record record = new Record()
+                Host record = new Host()
                 {
-                    Name = "Brian" + i.ToString().PadLeft(6, '0'),
-                    Weight = count - (i / (count - i)),
-                    Weight2 = i / (count - i),
-                    ID = i + (count / 2),
-                    TransactionID = Guid.NewGuid(),
-                    NetWorth = 5000,
-                    SeenDate = DateTime.Now,
-                    OtherDate = DateTimeOffset.Now,
-                    PocketChange = new decimal(0.01) * new decimal(i),
-                    TimeSpent = TimeSpan.FromMinutes(60),
-                    CarColor = Color.Red,
-                    SomeObject = new object(),
+                    Name = "Wyatt" + i.ToString().PadLeft(6, '0'),
+                    SerialNumber = i + recordCount,
+                    Uptime = TimeSpan.FromMinutes(i),
+                    PokerMoney = new decimal(0.02) * new decimal(i),
+                    DeathCount = recordCount - (i / (recordCount - i)),
+                    Awareness = random.Next(0, 2) == 1 ? Awareness.NotAlive : Awareness.Alive,
+                    Escaped = true
                 };
 
-                thingy3.Collect(record);
+                autoStat2.Collect(record);
             }
 
-            var recordStats2 = thingy3.GetStats();
-            //Console.Write(recordStats2.ToTextFormat());
-            //Console.Clear();
+            var recordStats2 = autoStat2.GetStats();
+
+            Console.Write(recordStats2.ToTextFormat());
             Console.Write(recordStats2.ToTextTableFormat(Console.WindowWidth));
-            //recordStats2.OpenCsvInPowershell(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "stats.csv"));
+            recordStats1.OpenCsvInPowershell("stats.csv");
 
-            var recordStats3 = thingy.GetStatsComparedTo(thingy3)
+            var recordStats3 = autoStat1.GetStatsComparedTo(autoStat2)
                 .HighlightWhen(stat => stat.DiffPct >= .30);
-            //Console.Write(recordStats3.ToTextFormat());
-            //Console.Clear();
+
+            Console.Write(recordStats3.ToTextFormat());
             Console.Write(recordStats3.ToTextTableFormat(Console.WindowWidth));
-            recordStats3.OpenCsvInPowershell(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "stats.csv"));
+            recordStats1.OpenCsvInPowershell("stats.csv");
 
             Console.ReadKey();
         }
 
-        class Record
+        class Host
         {
-            [AutoStat]
             public string Name { get; set; }
-            public int Weight { get; set; }
-            public int Weight2 { get; set; }
-            public long ID { get; set; }
-            public Guid TransactionID { get; set; }
-            public BigInteger NetWorth { get; set; }
-            public DateTime SeenDate { get; set; }
-            public DateTimeOffset OtherDate { get; set; }
-            public Decimal PocketChange { get; set; }
-            public TimeSpan TimeSpent { get; set; }
-            public Color CarColor { get; set; }
-            public object SomeObject { get; set; }
-            public object SomeNullObject { get; } = null;
-            public List<int> SomeList { get; } = new List<int>();
+            [AutoStat]
+            public long SerialNumber { get; set; }
+            public TimeSpan Uptime { get; set; }
+            public Decimal PokerMoney { get; set; }
+            public int DeathCount { get; set; }
+            public Awareness Awareness { get; set; }
+            public bool Escaped { get; set; }
         }
 
-        enum Color
+        enum Awareness
         {
-            Red, Green, Blue,
+            NotAlive, Alive, AliveAndPissed,
         }
 
         public class TestStatCollector<T> : IStatCollector<T>
@@ -129,6 +112,7 @@ namespace sandbox
 
             public void AddValue(T value)
             {
+                // Collect our stat here for this record
                 if (DateTime.UtcNow.Millisecond % 2 == 0)
                     _count++;
             }
