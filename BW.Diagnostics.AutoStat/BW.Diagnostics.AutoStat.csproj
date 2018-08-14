@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>BW.Diagnostics.StatCollection</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.0.2</Version>
     <Authors>Brian Williams</Authors>
     <Description>Records statistics for a stream or collection of objects.</Description>
     <Copyright>Brian Williams</Copyright>
@@ -12,6 +12,11 @@
     <PackageProjectUrl>https://github.com/bmdub/AutoStat</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bmdub/AutoStat</RepositoryUrl>
     <PackageTags>stats statistics autostat cardinality count estiimate percentile frequent frequency distinct distribution compare similar</PackageTags>
+    <PackageId>AutoStat</PackageId>
+    <Product>AutoStat</Product>
+  
+    <!-- https://github.com/NuGet/Home/issues/3891 -->
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -27,7 +32,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CardinalityEstimation\CardinalityEstimation\CardinalityEstimation.csproj" />
+    <PackageReference Include="murmurhash" Version="1.0.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- https://github.com/NuGet/Home/issues/3891 -->
+    <ProjectReference Include="..\CardinalityEstimation\CardinalityEstimation\CardinalityEstimation.csproj" PrivateAssets="All">
+    </ProjectReference>
+  </ItemGroup>
+
+  <!-- https://github.com/NuGet/Home/issues/3891 -->
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')-&gt;WithMetadataValue('PrivateAssets', 'All'))" />
+    </ItemGroup>
+  </Target>
 
 </Project>
