@@ -15,8 +15,6 @@ Construct with the type of object you want to collect stats on:
 ```CSharp
 var autoStat1 = new AutoStat<Host>();
 ``` 
-<br/>
-
 Run some records through:
 ```CSharp
 for (int i = 0; i < recordCount; i++)
@@ -35,30 +33,16 @@ for (int i = 0; i < recordCount; i++)
   autoStat1.Collect(record);
 }
 ```
-
 At any point, compute the current stats:
 ```CSharp
 var recordStats1 = autoStat1.GetStats();
 ``` 
-<br/>
 Output the stats to the console window:
 ```CSharp
 Console.Write(recordStats1.ToTextTableFormat(Console.WindowWidth));
 ``` 
 
-### Alternate output formatting:
-
-To output to .csv:
-```CSharp
-recordStats1.ToCsvFile("stats.csv");
-```
-
-To output to .csv, then open in Powershell (Windows only):
-```CSharp
-recordStats1.OpenCsvInPowershell("stats.csv");
-```
-
-## Comparison Stats
+### Comparison Stats
 
 You can compare the statistics (including an estimate of equality) of two streams as so:
 ```CSharp
@@ -74,8 +58,19 @@ var recordStats3 = autoStat1.GetStatsComparedTo(autoStat2)
 ``` 
 <br/>
 
+## Alternate output formatting:
 
-### Choosing Class Members
+To output to .csv:
+```CSharp
+recordStats1.ToCsvFile("stats.csv");
+```
+
+To output to .csv, then open in Powershell (Windows only):
+```CSharp
+recordStats1.OpenCsvInPowershell("stats.csv");
+```
+
+## Choosing Class Members
 
 By default, all public properties are chosen for stat collection.
 
@@ -90,7 +85,7 @@ var config = new TestConfiguration(SelectionMode.Attribute);
 var autoStat1 = new AutoStat<Host>(config);
 ```
 
-### Choosing Stats
+## Choosing Stats
 Stat collectors are responsible for collecting and reporting one or more stat values.  You can select the names of the 
 specific collectors you want (default is Configuration.DefaultStatCollectors):
 ```CSharp
@@ -98,7 +93,7 @@ var config = new TestConfiguration(SelectionMode.All, new[] { "CountStatCollecto
 var autoStat1 = new AutoStat<Host>(config);
 ```
 
-### Filtering Output
+## Filtering Output
 You can also filter the output stats calculated from GetStats() or GetStatsComparedTo() by:
 ```CSharp
 var recordStats1 = autoStat1.GetStats();
