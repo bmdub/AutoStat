@@ -3,9 +3,19 @@ https://www.nuget.org/packages/AutoStat
 
 AutoStat is a stat collector which collects statistics on objects in a stream (or a batch).  Time and memory complexity are constant, meaning that collection can be done on a stream of infinite size without issue.
 
-Note: This class is not thread-safe.
+Built-in stats:<br/>
+- Count <br/>
+- Non-null/default Count<br/>
+- Distinct Count<br/>
+- Min/Max<br/>
+- Mean, Standard Deviation<br/>
+- N Most Frequent<br/>
+- Percentile Values<br/>
+- Sample Comparison (Comparison of 2 sets)<br/>
 
 ### Usage
+
+Note: This class is not thread-safe.
 
 ```CSharp
 using BW.Diagnostics.StatCollection;
@@ -13,25 +23,11 @@ using BW.Diagnostics.StatCollection.Stats; // If you want to make custom stats
 ``` 
 Construct with the type of object you want to collect stats on:
 ```CSharp
-var autoStat1 = new AutoStat<Host>();
+var autoStat1 = new AutoStat<Person>();
 ``` 
-Run some records through:
+Run each record through:
 ```CSharp
-for (int i = 0; i < recordCount; i++)
-{
-  Host record = new Host()
-  {
-    Name = "Wyatt" + i.ToString().PadLeft(6, '0'),
-    SerialNumber = i,
-    Uptime = TimeSpan.FromMinutes(i),
-    PokerMoney = new decimal(0.01) * new decimal(i),
-    DeathCount = recordCount - (i / (recordCount - i)),
-    Awareness = random.Next(0, 2) == 1 ? Awareness.NotAlive : Awareness.AliveAndPissed,
-    Escaped = random.Next(0, 2) == 1
-   };
-
-  autoStat1.Collect(record);
-}
+autoStat1.Collect(record);
 ```
 At any point, compute the current stats:
 ```CSharp
