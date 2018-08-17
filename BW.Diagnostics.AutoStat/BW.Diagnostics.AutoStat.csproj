@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>BW.Diagnostics.StatCollection</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>Brian Williams</Authors>
     <Description>Records statistics for a stream or collection of objects.</Description>
     <Copyright>Brian Williams</Copyright>
