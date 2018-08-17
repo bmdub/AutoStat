@@ -16,13 +16,11 @@ namespace BW.Diagnostics.StatCollection.Stats
         const int MaxSamples = 10_000;
         List<ulong> _hashes = new List<ulong>(MaxSamples);
         byte _minRequiredZeros = 0;
-        HashAlgorithm _murmur128;
 
         public SampleStatCollector(string memberName, Configuration configuration, out bool cancel)
         {
             MemberName = memberName;
             _byteConverter = ByteConverterHelpers.GetByteConverter<T>();
-            _murmur128 = MurmurHash.Create128(managed: false); // returns a 128-bit algorithm using "unsafe" code with default seed
             cancel = false;
         }
 
@@ -31,7 +29,14 @@ namespace BW.Diagnostics.StatCollection.Stats
             ulong hash = 1;
             if (value != null)
             {
-                hash = BitConverter.ToUInt64(_murmur128.ComputeHash(_byteConverter.ToByteArray(value)), 0);
+                // FNV-1A hash
+                var bytes = _byteConverter.ToByteArray(value);
+                hash = 14695981039346656037;
+                foreach (byte b in bytes)
+                {
+                    hash ^= b;
+                    hash *= 0x100000001b3;
+                }
             }
 
             AddHash(hash);

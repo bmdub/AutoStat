@@ -34,7 +34,7 @@ namespace BW.Diagnostics.StatCollection.Stats
             else*/
             {
                 _byteConverter = ByteConverterHelpers.GetByteConverter<T>();
-                _estimator = new CardinalityEstimator();
+                _estimator = new CardinalityEstimator(14, CardinalityEstimation.Hash.HashFunctionId.Fnv1A);
             }
 
             cancel = false;
