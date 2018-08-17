@@ -24,7 +24,7 @@ namespace BW.Diagnostics.StatCollection
             "PercentileStatCollector",
             "SampleStatCollector",
             "StandardDeviationStatCollector",
-            "SumStatCollector",
+            //"SumStatCollector",
         };
 
         /// <summary>The configuration for the PercentileStatCollector.</summary>
