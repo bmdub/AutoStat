@@ -21,7 +21,7 @@ namespace BW.Diagnostics.AutoStat.Test
             _divisor = configuration.Divisor;
         }
 
-        public void AddValue(T value)
+        public void AddValue(ulong keyHash, T value)
         {
             if (DateTime.UtcNow.Millisecond % 2 == 0)
                 _count++;
