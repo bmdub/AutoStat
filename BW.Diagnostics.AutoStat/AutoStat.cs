@@ -19,18 +19,51 @@ namespace BW.Diagnostics.StatCollection
 
         /// <summary></summary>
         /// <param name="configuration">Optional configuration.</param>
-        public AutoStat(Configuration configuration = null)
+        /// <param name="keyName">Optional name of the property to key on. Required for sample comparison.</param>
+        public AutoStat(Configuration configuration = null, string keyName = null)
         {
             if (configuration == null)
                 configuration = new Configuration(SelectionMode.All);
 
-            // Search for properties in the given type to collect stats on.
-            List<Expression> expressions = new List<Expression>();
             var recordParameter = Expression.Parameter(typeof(TRECORD));
             var variables = new List<ParameterExpression>();
+            List<Expression> expressions = new List<Expression>();
 
+            // Get the key column / hash function
+            ParameterExpression keyHashVariable = Expression.Variable(typeof(ulong));
+            variables.Add(keyHashVariable);
             foreach (PropertyInfo propertyInfo in typeof(TRECORD).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
+                if (string.Compare(propertyInfo.Name, keyName, true) != 0) continue;
+
+                if (!propertyInfo.CanRead) { continue; }
+                MethodInfo getMethod = propertyInfo.GetGetMethod(false);
+                if (getMethod == null) { continue; }
+
+                MethodCallExpression getterCall = Expression.Call(recordParameter, getMethod);
+                var keyVariable = Expression.Variable(propertyInfo.PropertyType);
+                variables.Add(keyVariable);
+                expressions.Add(Expression.Assign(keyVariable, getterCall));
+                                             
+                var genericType = typeof(Hasher<>).MakeGenericType(propertyInfo.PropertyType);
+
+                var constructor = genericType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault();
+                
+                var hasher = Activator.CreateInstance(genericType);
+
+                var hashMethod = hasher.GetType().GetMethod(nameof(Hasher<bool>.GetHash), new[] { propertyInfo.PropertyType });
+
+                var hashCall = Expression.Call(Expression.Constant(hasher), hashMethod, keyVariable);
+                expressions.Add(hashCall);
+                
+                expressions.Add(Expression.Assign(keyHashVariable, hashCall));
+
+                break;
+            }
+                       
+            // Search for properties in the given type to collect stats on.
+            foreach (PropertyInfo propertyInfo in typeof(TRECORD).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {                
                 if (!propertyInfo.CanRead) { continue; }
                 MethodInfo getMethod = propertyInfo.GetGetMethod(false);
                 if (getMethod == null) { continue; }
@@ -77,8 +110,8 @@ namespace BW.Diagnostics.StatCollection
                             Debugger.Break();
 
                         var parameters = constructor.GetParameters().ToList();
-                        if (parameters.Count != 3 || 
-                            parameters[0].ParameterType != typeof(string) || 
+                        if (parameters.Count != 3 ||
+                            parameters[0].ParameterType != typeof(string) ||
                             !typeof(Configuration).IsAssignableFrom(parameters[1].ParameterType) ||
                             parameters[2].ParameterType != Type.GetType("System.Boolean&"))
                         {
@@ -103,10 +136,10 @@ namespace BW.Diagnostics.StatCollection
                 // Use expressions to dynamically generate the code that will be called to collect stats for each member for each stat collector.
                 for (int i = 0; i < memberStatCollectors.Count; i++)
                 {
-                    var addValueMethod = memberStatCollectors[i].GetType().GetMethod(nameof(IStatCollector<bool>.AddValue), new[] { propertyInfo.PropertyType });
+                    var addValueMethod = memberStatCollectors[i].GetType().GetMethod(nameof(IStatCollector<bool>.AddValue), new[] { typeof(ulong).UnderlyingSystemType, propertyInfo.PropertyType });
                     if (addValueMethod == null)
                         throw new ArgumentException($"Type {memberStatCollectors[i].GetType()} does not implement interface '{nameof(IStatCollector)}<T>'."); // (IStat<T>)  
-                    var addValueCall = Expression.Call(Expression.Constant(memberStatCollectors[i]), addValueMethod, valueVariable);
+                    var addValueCall = Expression.Call(Expression.Constant(memberStatCollectors[i]), addValueMethod, keyHashVariable, valueVariable);
                     expressions.Add(addValueCall);
                 }
 

@@ -17,9 +17,9 @@ namespace sandbox
             var config = new TestConfiguration(SelectionMode.All, Configuration.DefaultStatCollectors.Append("TestStatCollector"));
 
             //var autoStat1 = new AutoStat<Host>(config);
-            var autoStat1 = new AutoStat<Host>();
+            var autoStat1 = new AutoStat<Host>(keyName: "id");
             //var autoStat2 = new AutoStat<Host>(config);
-            var autoStat2 = new AutoStat<Host>();
+            var autoStat2 = new AutoStat<Host>(keyName: "id");
 
             Random random = new Random();
             int recordCount = 1_000_000;
@@ -32,6 +32,7 @@ namespace sandbox
                 {
                     Name = "Wyatt" + i.ToString().PadLeft(6, '0'),
                     SerialNumber = i,
+                    Id = i,
                     Uptime = TimeSpan.FromMinutes(i),
                     PokerMoney = new decimal(0.01) * new decimal(i),
                     DeathCount = recordCount - (i / (recordCount - i)),
@@ -57,6 +58,7 @@ namespace sandbox
                 {
                     Name = "Wyatt" + i.ToString().PadLeft(6, '0'),
                     SerialNumber = i + recordCount,
+                    Id = i,
                     Uptime = TimeSpan.FromMinutes(i),
                     PokerMoney = new decimal(0.02) * new decimal(i),
                     DeathCount = recordCount - (i / (recordCount - i)),
@@ -88,6 +90,7 @@ namespace sandbox
             public string Name { get; set; }
             [AutoStat]
             public long SerialNumber { get; set; }
+            public long Id { get; set; }
             public TimeSpan Uptime { get; set; }
             public Decimal PokerMoney { get; set; }
             public int DeathCount { get; set; }
@@ -114,7 +117,7 @@ namespace sandbox
                 _divisor = configuration.Divisor;
             }
 
-            public void AddValue(T value)
+            public void AddValue(ulong keyHash, T value)
             {
                 // Collect our stat here for this record
                 if (DateTime.UtcNow.Millisecond % 2 == 0)

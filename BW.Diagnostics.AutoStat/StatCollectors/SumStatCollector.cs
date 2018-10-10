@@ -22,7 +22,7 @@ namespace BW.Diagnostics.StatCollection.Stats
                 cancel = false;
         }
 
-        public void AddValue(T value)
+        public void AddValue(ulong keyHash, T value)
         {
             _totalValue += _math.ToDouble(value);
         }

@@ -7,15 +7,16 @@ Built-in stats:<br/>
 - Count <br/>
 - Non-null/default Count<br/>
 - Distinct Count<br/>
-- Min/Max<br/>
+- Min/Max Value<br/>
 - Mean, Standard Deviation<br/>
-- N Most Frequent<br/>
+- N Most Frequent Occurrences<br/>
 - Percentile Values<br/>
-- Sample Comparison (Comparison of 2 sets)<br/>
-
-### Usage
+- Existence Comparison (Compares the existence of unique values between 2 data sets)<br/>
+- Sample Comparison (Compares the values between two data sets for key-matched records)<br/>
 
 Note: This class is not thread-safe.
+
+### Usage
 
 ```CSharp
 using BW.Diagnostics.StatCollection;
@@ -23,7 +24,7 @@ using BW.Diagnostics.StatCollection.Stats; // If you want to make custom stats
 ``` 
 Construct with the type of object you want to collect stats on:
 ```CSharp
-var autoStat1 = new AutoStat<Person>();
+var autoStat1 = new AutoStat<Person>(keyName: "id");
 ``` 
 Run each record through:
 ```CSharp
@@ -37,6 +38,7 @@ Output the stats to the console window:
 ```CSharp
 Console.Write(recordStats1.ToTextTableFormat(Console.WindowWidth));
 ``` 
+Note: Specifying a key property in the constructor is optional. Using a key will allow for the "Sample" comparison stat.
 
 ### Comparison Stats
 
@@ -122,7 +124,7 @@ public class TestStatCollector<T> : IStatCollector<T>
         _divisor = configuration.Divisor;
     }
 
-    public void AddValue(T value)
+    public void AddValue(ulong keyHash, T value)
     {
         // Collect our stat here for this record
         if (DateTime.UtcNow.Millisecond % 2 == 0)

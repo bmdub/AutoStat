@@ -25,7 +25,8 @@ namespace BW.Diagnostics.StatCollection.Stats
         /// <summary>
         /// Accepts a record instance for the collection of statistics.
         /// </summary>
+        /// <param name="keyHash"></param>
         /// <param name="value"></param>
-        void AddValue(T value);
+        void AddValue(ulong keyHash, T value);
     }
 }

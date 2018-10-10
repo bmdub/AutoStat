@@ -41,7 +41,7 @@ namespace BW.Diagnostics.StatCollection.Stats
             cancel = false;
         }
 
-        public void AddValue(T value)
+        public void AddValue(ulong keyHash, T value)
         {
             if(value != null)
                 _estimator.Add(_byteConverter.ToByteArray(value));

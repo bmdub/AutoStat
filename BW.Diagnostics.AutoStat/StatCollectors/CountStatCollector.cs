@@ -17,7 +17,7 @@ namespace BW.Diagnostics.StatCollection.Stats
             cancel = false;
         }
 
-        public void AddValue(T value) => _count++;
+        public void AddValue(ulong keyHash, T value) => _count++;
 
         public IEnumerable<IStat> GetStats() => new CountStat(MemberName, _count).ToEnumerable();
 

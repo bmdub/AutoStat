@@ -19,7 +19,7 @@ namespace BW.Diagnostics.StatCollection.Stats
             _math = MathHelpers.GetMath<T>();
         }
 
-        public void AddValue(T value)
+        public void AddValue(ulong keyHash, T value)
         {
             if (value?.CompareTo(_maxValue) > 0)
                 _maxValue = value;
