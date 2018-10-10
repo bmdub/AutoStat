@@ -22,7 +22,7 @@ namespace BW.Diagnostics.StatCollection
             "MostFrequentStatCollector",
             "NonDefaultCountStatCollector",
             "PercentileStatCollector",
-            "SampleStatCollector",
+            "ExistenceStatCollector",
             "StandardDeviationStatCollector",
             //"SumStatCollector",
         };

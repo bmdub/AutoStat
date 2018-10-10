@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BW.Diagnostics.StatCollection.Stats
 {
-    class SampleStatCollector<T> : IStatCollector<T>
+    class ExistenceStatCollector<T> : IStatCollector<T>
     {
         public string MemberName { get; protected set; }
 
@@ -16,11 +16,13 @@ namespace BW.Diagnostics.StatCollection.Stats
         const int MaxSamples = 10_000;
         List<ulong> _hashes = new List<ulong>(MaxSamples);
         byte _minRequiredZeros = 0;
+        Murmur128 _murmurHash;
 
-        public SampleStatCollector(string memberName, Configuration configuration, out bool cancel)
+        public ExistenceStatCollector(string memberName, Configuration configuration, out bool cancel)
         {
             MemberName = memberName;
             _byteConverter = ByteConverterHelpers.GetByteConverter<T>();
+            _murmurHash = MurmurHash.Create128(managed: true, preference: AlgorithmPreference.X64);
             cancel = false;
         }
 
@@ -29,14 +31,9 @@ namespace BW.Diagnostics.StatCollection.Stats
             ulong hash = 1;
             if (value != null)
             {
-                // FNV-1A hash
-                var bytes = _byteConverter.ToByteArray(value);
-                hash = 14695981039346656037;
-                foreach (byte b in bytes)
-                {
-                    hash ^= b;
-                    hash *= 0x100000001b3;
-                }
+                var bytes = _byteConverter.ToByteArray(value);                               
+                byte[] result = _murmurHash.ComputeHash(bytes);
+                hash = BitConverter.ToUInt64(result, 0);
             }
 
             AddHash(hash);
@@ -80,9 +77,9 @@ namespace BW.Diagnostics.StatCollection.Stats
 
         public IEnumerable<IComparedStat> GetStatsComparedTo(IStatCollector statCollector)
         {
-            var otherHashes = (statCollector as SampleStatCollector<T>)._hashes;
+            var otherHashes = (statCollector as ExistenceStatCollector<T>)._hashes;
 
-            return new SampleComparedStat<T>(MemberName, _hashes, otherHashes).ToEnumerable();
+            return new ExistenceComparedStat<T>(MemberName, _hashes, otherHashes).ToEnumerable();
         }
     }
 }

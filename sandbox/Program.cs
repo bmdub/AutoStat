@@ -5,6 +5,7 @@ using System.IO;
 using System.Numerics;
 using BW.Diagnostics.StatCollection;
 using BW.Diagnostics.StatCollection.Stats;
+using System.Diagnostics;
 
 namespace sandbox
 {
@@ -21,8 +22,10 @@ namespace sandbox
             var autoStat2 = new AutoStat<Host>();
 
             Random random = new Random();
-            int recordCount = 1_000;
+            int recordCount = 1_000_000;
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             for (int i = 0; i < recordCount; i++)
             {
                 Host record = new Host()
@@ -38,13 +41,14 @@ namespace sandbox
 
                 autoStat1.Collect(record);
             }
-
+            Console.WriteLine(stopwatch.Elapsed);
+            //return;
             var recordStats1 = autoStat1.GetStats();
 
             Console.Write(recordStats1.ToTextFormat());
             //recordStats = recordStats.Where(stat => stat.MemberName == "SerialNumber").ToRecordStats();
             Console.Write(recordStats1.ToTextTableFormat(Console.WindowWidth));
-            recordStats1.OpenCsvInPowershell("stats.csv");
+            //recordStats1.OpenCsvInPowershell("stats.csv");
             
 
             for (int i = 0; i < recordCount; i++)
@@ -67,14 +71,14 @@ namespace sandbox
 
             Console.Write(recordStats2.ToTextFormat());
             Console.Write(recordStats2.ToTextTableFormat(Console.WindowWidth));
-            recordStats1.OpenCsvInPowershell("stats.csv");
+            //recordStats1.OpenCsvInPowershell("stats.csv");
 
             var recordStats3 = autoStat1.GetStatsComparedTo(autoStat2)
                 .HighlightWhen(stat => stat.DiffPct >= .30);
 
             Console.Write(recordStats3.ToTextFormat());
             Console.Write(recordStats3.ToTextTableFormat(Console.WindowWidth));
-            recordStats1.OpenCsvInPowershell("stats.csv");
+            //recordStats1.OpenCsvInPowershell("stats.csv");
 
             Console.ReadKey();
         }

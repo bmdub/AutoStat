@@ -7,7 +7,7 @@ namespace BW.Diagnostics.StatCollection.Stats
     /// <summary>
     /// Comparison of the values of the two sets.
     /// </summary>
-    public class SampleComparedStat<T> : IComparedStat
+    public class ExistenceComparedStat<T> : IComparedStat
     {
         /// <summary>The name of the class member this is collecting stats on.</summary>
         public string MemberName { get; protected set; }
@@ -21,11 +21,11 @@ namespace BW.Diagnostics.StatCollection.Stats
         public double DiffPct { get; protected set; }
 
         /// <summary>The name of the stat.</summary>
-        public string Name => "~ Sample Compared";
+        public string Name => "~ Existence Compared";
         /// <summary>The string value of the stat.</summary>
         public string StringValue { get; set; }
 
-        internal SampleComparedStat(string memberName, IList<ulong> hashes1, IList<ulong> hashes2)
+        internal ExistenceComparedStat(string memberName, IList<ulong> hashes1, IList<ulong> hashes2)
         {
             MemberName = memberName;
             HashSet<ulong> hashesSet = new HashSet<ulong>(hashes2);

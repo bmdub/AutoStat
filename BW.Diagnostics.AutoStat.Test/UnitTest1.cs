@@ -94,7 +94,7 @@ namespace BW.Diagnostics.AutoStat.Test
             Assert.True((recordStats.Where(stat => stat.MemberName == "Weight" && stat.Name == "Min").First() as MinStat<int>).Min == 0);
             Assert.True(Math.Abs((recordStats.Where(stat => stat.MemberName == "ID" && stat.Name == "Mean").First() as MeanStat<long>).Mean - 500) <= 1);
             Assert.True(Math.Abs((recordStats.Where(stat => stat.MemberName == "ID" && stat.Name == "Standard Deviation").First() as StandardDeviationStat<long>).Value - 288) <= 1);
-            Assert.True((recordStats.Where(stat => stat.MemberName == "ID" && stat.Name == "Sum").First() as SumStat<long>).Sum == 499500);
+            //Assert.True((recordStats.Where(stat => stat.MemberName == "ID" && stat.Name == "Sum").First() as SumStat<long>).Sum == 499500);
 
             Assert.True((recordStats.Where(stat => stat.MemberName == "Weight" && stat.Name == "~ 1th Percentile").First() as PercentileStat<int>).Value == 901);
             Assert.True((recordStats.Where(stat => stat.MemberName == "Weight" && stat.Name.Contains("1st Most Frequent")).First() as MostFrequentStat<int>).Value == 1000);
