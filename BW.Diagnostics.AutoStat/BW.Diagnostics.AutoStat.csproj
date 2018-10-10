@@ -4,14 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>BW.Diagnostics.StatCollection</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.4</Version>
+    <Version>1.2.5</Version>
     <Authors>Brian Williams</Authors>
     <Description>Records statistics for a stream or collection of objects.</Description>
     <Copyright>Brian Williams</Copyright>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bmdub/AutoStat</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bmdub/AutoStat</RepositoryUrl>
-    <PackageTags>stats statistics autostat cardinality count estiimate percentile frequent frequency distinct distribution compare similar</PackageTags>
+    <PackageTags>stats statistics cardinality count estimate percentile frequency distinct</PackageTags>
     <PackageId>AutoStat</PackageId>
     <Product>AutoStat</Product>
   
