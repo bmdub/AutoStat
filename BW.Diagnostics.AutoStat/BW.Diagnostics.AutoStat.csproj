@@ -32,13 +32,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CardinalityEstimation" Version="1.7.0" />
     <PackageReference Include="murmurhash" Version="1.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- https://github.com/NuGet/Home/issues/3891 -->
-    <ProjectReference Include="..\CardinalityEstimation\CardinalityEstimation\CardinalityEstimation.csproj" PrivateAssets="All">
-    </ProjectReference>
   </ItemGroup>
 
   <!-- https://github.com/NuGet/Home/issues/3891 -->
