@@ -1,18 +1,18 @@
 # AutoStat
 https://www.nuget.org/packages/AutoStat
 
-AutoStat is a stat collector which collects statistics on objects in a stream (or a batch).  Time and memory complexity are linear, meaning that stat collection can be done on a stream of infinite size in a reasonable amount of time.
+AutoStat is a stat collector which collects statistics on objects in a stream (or a batch).  Time and memory complexity are linear, meaning that stat collection can be done on a stream in real-time, or on a batch of records in a reasonable amount of time.
 
 Built-in stats:<br/>
 - Count <br/>
-- Non-null/default Count<br/>
-- Distinct Count<br/>
+- Default/Null Count<br/>
+- Distinct Count (Estimated)<br/>
 - Min/Max Value<br/>
 - Mean, Standard Deviation<br/>
-- N Most Frequent Occurrences<br/>
-- Percentile Values<br/>
-- Existence Comparison (Compares the existence of unique values between 2 data sets)<br/>
-- Sample Comparison (Compares the values between two data sets for key-matched records)<br/>
+- N Most Frequent Occurrences (Estimated)<br/>
+- Percentile Values (Estimated)<br/>
+- Existence Comparison (Estimated, compares the existence of all unique values between 2 data sets)<br/>
+- Sample Comparison (Estimated, compares the values between two data sets for key-matched records)<br/>
 
 Note: This class is not thread-safe.
 
