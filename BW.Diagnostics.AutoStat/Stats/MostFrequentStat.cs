@@ -26,10 +26,10 @@ namespace BW.Diagnostics.StatCollection.Stats
             MemberName = memberName;
 
             N = n;
-            if (n == 1) Name = "* 1st Most Frequent";
-            else if (n == 2) Name = "* 2nd Most Frequent";
-            else if (n == 3) Name = "* 3rd Most Frequent";
-            else Name = $"* {n}th Most Frequent";
+            if (n == 1) Name = "~ 1st Most Frequent";
+            else if (n == 2) Name = "~ 2nd Most Frequent";
+            else if (n == 3) Name = "~ 3rd Most Frequent";
+            else Name = $"~ {n}th Most Frequent";
 
             Value = value;
             StringValue = value.ToStringOrNull();
