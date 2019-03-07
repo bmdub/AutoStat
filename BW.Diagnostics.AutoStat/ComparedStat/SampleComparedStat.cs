@@ -29,7 +29,7 @@ namespace BW.Diagnostics.StatCollection.Stats
         {
             MemberName = memberName;
             Dictionary<ulong, T> hashesSet = new Dictionary<ulong, T>();
-            foreach (var kvp in hashes2) hashesSet.Add(kvp.hash, kvp.value);
+            foreach (var kvp in hashes2) hashesSet[kvp.hash] = kvp.value;
 
             int mismatchCount = 0;
             foreach (var hash in hashes1)

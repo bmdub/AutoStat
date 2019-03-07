@@ -27,6 +27,8 @@ namespace BW.Diagnostics.StatCollection.Stats
             // Count the trailings 0's of hash, if > n, then add hash to list.
             // If maxed, recount the 0's of the hashes at n+1, trimming the list.
 
+            if (keyHash == 0) return; // No key; do not sample
+
             var zeros = (byte)(BitHelpers.CountTrailing0Bits64((ulong)keyHash));
             if (zeros >= _minRequiredZeros)
             {

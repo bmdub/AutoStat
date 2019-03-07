@@ -6,6 +6,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
+// different maps for TRECORD depending on type 
+// todo: support ienumerable as trecord
+// support json string as trecord?
+// xml?
+// support external key?
+
 namespace BW.Diagnostics.StatCollection
 {
     /// <summary>
