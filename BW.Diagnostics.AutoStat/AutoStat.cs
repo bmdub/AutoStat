@@ -6,10 +6,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-// different maps for TRECORD depending on type 
-// todo: support ienumerable as trecord
-// support json string as trecord?
-// xml?
+// todo: 
+// clear() method
+// support fixed-size array as trecord
 // support external key?
 
 namespace BW.Diagnostics.StatCollection
@@ -20,6 +19,9 @@ namespace BW.Diagnostics.StatCollection
     /// <typeparam name="TRECORD">The type of the class to monitor.</typeparam>
     public partial class AutoStat<TRECORD>
     {
+        /// <summary>The current count of records sampled.</summary>
+        public long Count { get; private set; }
+
         Action<TRECORD> _collectAction;
         List<IStatCollector> _statCollectors = new List<IStatCollector>();
 
@@ -157,7 +159,11 @@ namespace BW.Diagnostics.StatCollection
 
         /// <summary>Add the given record to the statistics.</summary>
         /// <param name="record"></param>
-        public void Collect(TRECORD record) => _collectAction(record);
+        public void Collect(TRECORD record)
+        {
+            _collectAction(record);
+            Count++;
+        }
 
         /// <summary>Add the given records to the statistics.</summary>
         /// <param name="records"></param>
