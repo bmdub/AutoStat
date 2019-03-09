@@ -79,7 +79,7 @@ public long SerialNumber { get; set; }
 ```
 Then, specify in configuration that AutoStat should only choose members with the attribute:
 ```CSharp
-var config = new TestConfiguration(SelectionMode.Attribute);
+var config = new Configuration(SelectionMode.Attribute);
 var autoStat1 = new AutoStat<Host>(config);
 ```
 
@@ -87,7 +87,7 @@ var autoStat1 = new AutoStat<Host>(config);
 Stat collectors are responsible for collecting and reporting one or more stat values.  You can select the names of the 
 specific collectors you want (default is Configuration.DefaultStatCollectors):
 ```CSharp
-var config = new TestConfiguration(SelectionMode.All, new[] { "CountStatCollector", "DistinctStatCollector" });
+var config = new Configuration(SelectionMode.All, new[] { "CountStatCollector", "DistinctStatCollector" });
 var autoStat1 = new AutoStat<Host>(config);
 ```
 
