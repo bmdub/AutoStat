@@ -184,5 +184,50 @@ namespace BW.Diagnostics.AutoStat.Test
 
             autostat.GetStatsComparedTo(autostat);
         }
+
+        [Fact]
+        public void ResetTest()
+        {
+            var autostat = new AutoStat<TestRecord>();
+
+            int count = 100;
+
+            void CollectSomeRecords()
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    TestRecord record = new TestRecord()
+                    {
+                        Name = "John" + i.ToString().PadLeft(6, '0'),
+                        Weight = count - (i / (count - i)),
+                        ID = i,
+                        TransactionID = Guid.NewGuid(),
+                        NetWorth = 5000,
+                        SeenDate = DateTime.Now,
+                        OtherDate = DateTimeOffset.Now,
+                        PocketChange = new decimal(0.01) * new decimal(i),
+                        TimeSpent = TimeSpan.FromMinutes(60),
+                        CarColor = Color.Red,
+                        SomeObject = new object(),
+                        SometimesNullObject = i % 2 == 0 ? null : new object()
+                    };
+
+                    autostat.Collect(record);
+                }
+            }
+
+            CollectSomeRecords();
+
+            Assert.True(autostat.Count == 100);
+
+            autostat.Reset();
+
+            CollectSomeRecords();
+            var stats2 = autostat.GetStats();
+
+            Assert.True(autostat.Count == 100);
+
+            Assert.True((stats2.Where(stat => stat.MemberName == "Name" && stat.Name == "Count").First() as CountStat).Count == count);
+        }
     }
 }

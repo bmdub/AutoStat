@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 // todo: 
-// clear() method
 // support fixed-size array as trecord
 // support external key?
 
@@ -30,6 +29,14 @@ namespace BW.Diagnostics.StatCollection
         /// <param name="keyName">Optional name of the property to key on. Required for sample comparison.</param>
         public AutoStat(Configuration configuration = null, string keyName = null)
         {
+            Init(configuration, keyName);
+        }
+
+        void Init(Configuration configuration = null, string keyName = null)
+        {
+            Count = 0;
+            _statCollectors.Clear();
+
             if (configuration == null)
                 configuration = new Configuration(SelectionMode.All);
 
@@ -52,26 +59,26 @@ namespace BW.Diagnostics.StatCollection
                 var keyVariable = Expression.Variable(propertyInfo.PropertyType);
                 variables.Add(keyVariable);
                 expressions.Add(Expression.Assign(keyVariable, getterCall));
-                                             
+
                 var genericType = typeof(Hasher<>).MakeGenericType(propertyInfo.PropertyType);
 
                 var constructor = genericType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).FirstOrDefault();
-                
+
                 var hasher = Activator.CreateInstance(genericType);
 
                 var hashMethod = hasher.GetType().GetMethod(nameof(Hasher<bool>.GetHash), new[] { propertyInfo.PropertyType });
 
                 var hashCall = Expression.Call(Expression.Constant(hasher), hashMethod, keyVariable);
                 expressions.Add(hashCall);
-                
+
                 expressions.Add(Expression.Assign(keyHashVariable, hashCall));
 
                 break;
             }
-                       
+
             // Search for properties in the given type to collect stats on.
             foreach (PropertyInfo propertyInfo in typeof(TRECORD).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {                
+            {
                 if (!propertyInfo.CanRead) { continue; }
                 MethodInfo getMethod = propertyInfo.GetGetMethod(false);
                 if (getMethod == null) { continue; }
@@ -155,6 +162,14 @@ namespace BW.Diagnostics.StatCollection
             }
 
             _collectAction = Expression.Lambda<Action<TRECORD>>(Expression.Block(variables, expressions), recordParameter).Compile();
+        }
+
+        /// <summary>Clears the gathered statistics.</summary>
+        public void Reset()
+        {
+            // TODO
+            // We can be more efficient than re-initializing.
+            Init();
         }
 
         /// <summary>Add the given record to the statistics.</summary>
