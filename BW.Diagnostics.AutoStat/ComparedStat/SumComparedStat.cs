@@ -36,7 +36,8 @@ namespace BW.Diagnostics.StatCollection.Stats
             var sum1 = math.ToDouble(stat1.Sum);
             var sum2 = math.ToDouble(stat2.Sum);
 
-            DiffPct = (sum1 - sum2) / sum2;
+            DiffPct = (sum2 - sum1) / sum1;
+            if (double.IsNaN(DiffPct)) DiffPct = 0;
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();

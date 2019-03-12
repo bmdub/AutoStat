@@ -28,13 +28,15 @@ namespace BW.Diagnostics.StatCollection.Stats
         internal SampleComparedStat(string memberName, IList<(ulong hash, T value)> hashes1, IList<(ulong hash, T value)> hashes2)
         {
             MemberName = memberName;
-            Dictionary<ulong, T> hashesSet = new Dictionary<ulong, T>();
-            foreach (var kvp in hashes2) hashesSet[kvp.hash] = kvp.value;
+            
+            Dictionary<ulong, T> hashes2Set = new Dictionary<ulong, T>();
+            foreach (var kvp in hashes2) hashes2Set[kvp.hash] = kvp.value;
 
             int mismatchCount = 0;
+
             foreach (var hash in hashes1)
             {
-                if (hashesSet.TryGetValue(hash.hash, out T value) == false)
+                if (hashes2Set.TryGetValue(hash.hash, out T value) == false)
                 {
                     mismatchCount++;
                     continue;
@@ -43,11 +45,11 @@ namespace BW.Diagnostics.StatCollection.Stats
                 if (EqualityComparer<T>.Default.Equals(value, hash.value) == false)
                     mismatchCount++;
             }
-
-            var max = hashes2.Count;// Math.Max(hashesSet.Count, otherHashes.Count);
-            if (max == 0) max = 1;
-
-            DiffPct = (double)mismatchCount / max;
+            
+            DiffPct = (double)mismatchCount / hashes1.Count;
+            if (double.IsNaN(DiffPct))
+                if (hashes2.Count > 0) DiffPct = 1;
+                else DiffPct = 0;
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();

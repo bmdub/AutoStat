@@ -28,16 +28,16 @@ namespace BW.Diagnostics.StatCollection.Stats
         internal ExistenceComparedStat(string memberName, IList<ulong> hashes1, IList<ulong> hashes2)
         {
             MemberName = memberName;
-            HashSet<ulong> hashesSet = new HashSet<ulong>(hashes2);
+            HashSet<ulong> hashes2Set = new HashSet<ulong>(hashes2);
 
-            int mismatchCount = 0;
+            int nonExistCount = 0;
             foreach (var hash in hashes1)
-                if (!hashesSet.Contains(hash)) mismatchCount++;
-
-            var max = hashes2.Count;// Math.Max(hashesSet.Count, otherHashes.Count);
-            if (max == 0) max = 1;
-
-            DiffPct = (double)mismatchCount / max;
+                if (!hashes2Set.Contains(hash)) nonExistCount++;
+            
+            DiffPct = (double)nonExistCount / hashes1.Count;
+            if (double.IsNaN(DiffPct))
+                if (hashes2.Count > 0) DiffPct = 1;
+                else DiffPct = 0;
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();

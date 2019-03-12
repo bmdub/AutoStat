@@ -99,6 +99,43 @@ namespace BW.Diagnostics.AutoStat.Test
         }
 
         [Fact]
+        public void NUllTest()
+        {
+            var autostat1 = new AutoStat<TestRecord>(keyName: "id");
+
+            int count = 1_000;
+            for (int i = 0; i < count; i++)
+            {
+                TestRecord record = new TestRecord()
+                {
+                    Name = "John" + i.ToString().PadLeft(6, '0'),
+                    Weight = count - (i / (count - i)),
+                    ID = i,
+                    TransactionID = Guid.NewGuid(),
+                    NetWorth = 5000,
+                    SeenDate = DateTime.Now,
+                    OtherDate = DateTimeOffset.Now,
+                    PocketChange = new decimal(0.01) * new decimal(i),
+                    TimeSpent = TimeSpan.FromMinutes(60),
+                    CarColor = Color.Red,
+                    SomeObject = new object(),
+                    SometimesNullObject = i % 2 == 0 ? null : new object()
+                };
+
+                autostat1.Collect(record);
+            }
+
+            var autostat2 = new AutoStat<TestRecord>(keyName: "id");
+            var temp = autostat2.GetStats();
+
+            var autostat3 = new AutoStat<TestRecord>(keyName: "id");
+
+            var stats1 = autostat1.GetStatsComparedTo(autostat2);
+            var stats2 = autostat2.GetStatsComparedTo(autostat1);
+            var stats3 = autostat2.GetStatsComparedTo(autostat3);
+        }
+
+        [Fact]
         public void ComparedStatsWithKeyTest()
         {
             var autostat = new AutoStat<TestRecord>(keyName: "id");

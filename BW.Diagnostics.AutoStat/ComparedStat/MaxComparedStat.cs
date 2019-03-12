@@ -40,7 +40,8 @@ namespace BW.Diagnostics.StatCollection.Stats
             {
                 var val1 = math.ToDouble(stat1.Max);
                 var val2 = math.ToDouble(stat2.Max);
-                DiffPct = (val1 - val2) / val2;
+                DiffPct = (val2 - val1) / val1;
+                if (double.IsNaN(DiffPct)) DiffPct = 0;
             }
             else
             {

@@ -36,7 +36,8 @@ namespace BW.Diagnostics.StatCollection.Stats
             var standardDeviation1 = math.ToDouble(stat1.Value);
             var standardDeviation2 = math.ToDouble(stat2.Value);
 
-            DiffPct = (standardDeviation1 - standardDeviation2) / standardDeviation2;
+            DiffPct = (standardDeviation2 - standardDeviation1) / standardDeviation1;
+            if (double.IsNaN(DiffPct)) DiffPct = 0;
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();

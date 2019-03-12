@@ -31,7 +31,8 @@ namespace BW.Diagnostics.StatCollection.Stats
             Stat1 = stat1;
             Stat2 = stat2;
 
-            DiffPct = (double)(stat1.Count - stat2.Count) / stat2.Count;
+            DiffPct = (double)(stat2.Count - stat1.Count) / stat1.Count;
+            if (double.IsNaN(DiffPct)) DiffPct = 0;
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();

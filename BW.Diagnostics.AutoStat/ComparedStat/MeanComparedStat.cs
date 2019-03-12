@@ -36,7 +36,8 @@ namespace BW.Diagnostics.StatCollection.Stats
             var mean1 = math.ToDouble(stat1.Mean);
             var mean2 = math.ToDouble(stat2.Mean);
 
-            DiffPct = (mean1 - mean2) / mean2;
+            DiffPct = (mean2 - mean1) / mean1;
+            if (double.IsNaN(DiffPct)) DiffPct = 0;
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();
