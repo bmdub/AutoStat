@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace BW.Diagnostics.StatCollection.Stats
@@ -28,7 +29,10 @@ namespace BW.Diagnostics.StatCollection.Stats
         internal SampleComparedStat(string memberName, IList<(ulong hash, T value)> hashes1, IList<(ulong hash, T value)> hashes2)
         {
             MemberName = memberName;
-            
+
+            Dictionary<ulong, T> hashes1Set = new Dictionary<ulong, T>();
+            foreach (var kvp in hashes1) hashes1Set[kvp.hash] = kvp.value;
+
             Dictionary<ulong, T> hashes2Set = new Dictionary<ulong, T>();
             foreach (var kvp in hashes2) hashes2Set[kvp.hash] = kvp.value;
 
@@ -45,11 +49,20 @@ namespace BW.Diagnostics.StatCollection.Stats
                 if (EqualityComparer<T>.Default.Equals(value, hash.value) == false)
                     mismatchCount++;
             }
-            
-            DiffPct = (double)mismatchCount / hashes1.Count;
-            if (double.IsNaN(DiffPct))
-                if (hashes2.Count > 0) DiffPct = 1;
-                else DiffPct = 0;
+
+            foreach (var hash in hashes2)
+            {
+                if (hashes1Set.TryGetValue(hash.hash, out T value) == false)
+                {
+                    mismatchCount++;
+                    continue;
+                }
+
+                if (EqualityComparer<T>.Default.Equals(value, hash.value) == false)
+                    mismatchCount++;
+            }
+
+            DiffPct = (double)mismatchCount / (hashes1.Count + hashes2.Count);
             IsDifferent = DiffPct != 0;
 
             StringValue = this.FormatComparedStats();

@@ -133,6 +133,7 @@ namespace BW.Diagnostics.AutoStat.Test
             var stats1 = autostat1.GetStatsComparedTo(autostat2);
             var stats2 = autostat2.GetStatsComparedTo(autostat1);
             var stats3 = autostat2.GetStatsComparedTo(autostat3);
+            var stats4 = autostat1.GetStatsComparedTo(autostat1);
         }
 
         [Fact]
