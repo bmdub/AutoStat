@@ -23,22 +23,27 @@ namespace BW.Diagnostics.StatCollection
 
         Action<TRECORD> _collectAction;
         List<IStatCollector> _statCollectors = new List<IStatCollector>();
+        Configuration _configuration;
+        string _keyName;
 
         /// <summary></summary>
         /// <param name="configuration">Optional configuration.</param>
         /// <param name="keyName">Optional name of the property to key on. Required for sample comparison.</param>
         public AutoStat(Configuration configuration = null, string keyName = null)
         {
-            Init(configuration, keyName);
+            _configuration = configuration;
+            _keyName = keyName;
+
+            Init();
         }
 
-        void Init(Configuration configuration = null, string keyName = null)
+        void Init()
         {
             Count = 0;
             _statCollectors.Clear();
 
-            if (configuration == null)
-                configuration = new Configuration(SelectionMode.All);
+            if (_configuration == null)
+                _configuration = new Configuration(SelectionMode.All);
 
             var recordParameter = Expression.Parameter(typeof(TRECORD));
             var variables = new List<ParameterExpression>();
@@ -49,7 +54,7 @@ namespace BW.Diagnostics.StatCollection
             variables.Add(keyHashVariable);
             foreach (PropertyInfo propertyInfo in typeof(TRECORD).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (string.Compare(propertyInfo.Name, keyName, true) != 0) continue;
+                if (string.Compare(propertyInfo.Name, _keyName, true) != 0) continue;
 
                 if (!propertyInfo.CanRead) { continue; }
                 MethodInfo getMethod = propertyInfo.GetGetMethod(false);
@@ -90,9 +95,9 @@ namespace BW.Diagnostics.StatCollection
 
                 // Create stat collectors for each property, when applicable.
                 List<IStatCollector> memberStatCollectors = new List<IStatCollector>();
-                foreach (var statType in configuration.StatCollectorTypes)
+                foreach (var statType in _configuration.StatCollectorTypes)
                 {
-                    if (configuration.SelectionMode == SelectionMode.Attribute)
+                    if (_configuration.SelectionMode == SelectionMode.Attribute)
                         if (!Attribute.IsDefined(propertyInfo, typeof(AutoStatAttribute)))
                             continue;
 
@@ -133,7 +138,7 @@ namespace BW.Diagnostics.StatCollection
                             throw new NotImplementedException($"No suitable constructor has been implemented for {genericStatType.Name}. Constructors must accept a first parameter (memberName) of type 'string', a second parameter of type '{nameof(Configuration)}', and a third parameter of type 'boolean'.");
                         }
 
-                        object[] args = new object[] { propertyInfo.Name, configuration, false };
+                        object[] args = new object[] { propertyInfo.Name, _configuration, false };
 
                         var statCollector = Activator.CreateInstance(genericStatType, args) as IStatCollector;
                         //var statCollector = CreateInstanceViaExpressions(genericStatType) as IStat;
