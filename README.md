@@ -1,7 +1,7 @@
 # AutoStat
 https://www.nuget.org/packages/AutoStat
 
-AutoStat is a stat collector which collects statistics on objects in a stream (or a batch).  Time and memory complexity are linear, meaning that stat collection can be done on a stream in real-time, or on a batch of records in a reasonable amount of time.
+AutoStat is a stat collector which collects statistics on objects in a stream (or a batch).  Memory complexity is constant, and time complexity is linear, meaning that stat collection can be done on a stream in real-time, or on a batch of records in a reasonable amount of time.
 
 Built-in stats:<br/>
 - Count <br/>
