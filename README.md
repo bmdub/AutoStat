@@ -1,9 +1,9 @@
 # AutoStat
 https://www.nuget.org/packages/AutoStat
 
-AutoStat is a stat collector which collects statistics on objects in a stream (or a batch).  Memory complexity is constant, and time complexity is linear, meaning that stat collection can be done on a stream in real-time, or on a batch of records in a reasonable amount of time.
+AutoStat is a stat collector which collects statistics on the attributes of objects in a stream (or a batch).  Memory complexity is constant, and time complexity is linear, meaning that stat collection can be done on an infinite stream in real-time, or on a batch of records in a reasonable amount of time.
 
-Built-in stats:<br/>
+Built-in stats collected for each object property:<br/>
 - Count <br/>
 - Default/Null Count<br/>
 - Distinct Count (Estimated)<br/>
@@ -11,8 +11,8 @@ Built-in stats:<br/>
 - Mean, Standard Deviation<br/>
 - N Most Frequent Occurrences (Estimated)<br/>
 - Percentile Values (Estimated)<br/>
-- Existence Comparison (Estimated, compares the existence of all unique values between 2 data sets)<br/>
-- Sample Comparison (Estimated, compares the values between two data sets for key-matched records)<br/>
+- Existence Comparison (Estimated, the percentage of values that exist between 2 data sets)<br/>
+- Sample Comparison (Estimated, match rate for values between two data sets given that the specified key for the two objects are equal)<br/>
 
 Note: This class is not thread-safe.
 
@@ -68,16 +68,16 @@ To output to .csv, then open in Powershell (Windows only):
 recordStats1.OpenCsvInPowershell("stats.csv");
 ```
 
-## Choosing Class Members
+## Choosing Specific Class Members
 
 By default, all public properties are chosen for stat collection.
 
-To choose certain class members only, specify an attribute for those class members:
+To choose class members explicitly, annotate them with the 'AutoStat' attribute as so:
 ```CSharp
 [AutoStat]
 public long SerialNumber { get; set; }
 ```
-Then, specify in configuration that AutoStat should only choose members with the attribute:
+Then, specify in configuration that AutoStat should only choose members annotated with the 'AutoStat' attribute:
 ```CSharp
 var config = new Configuration(SelectionMode.Attribute);
 var autoStat1 = new AutoStat<Host>(config);
